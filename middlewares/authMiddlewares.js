@@ -15,7 +15,15 @@ function authenticateToken(req, res, next) {
     }
 }
 
+const isManager = (req, res, next) => {
+    if (req.user.role !== "Manager") {
+        return res.status(403).json({ error: "Access denied. Only managers can change roles." });
+    }
+    next(); // User is a manager, proceed
+};
+
 const exportedFunctions = {
-    authenticateToken
+    authenticateToken,
+    isManager
 }
 export default exportedFunctions;

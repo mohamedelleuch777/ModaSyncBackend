@@ -74,6 +74,34 @@ class UsersController {
         }
     }
 
+    // ✅ Function to update user role (Only for Managers)
+    static updateUserRole = (req, res) => {
+        const { id } = req.params; // User ID to update
+        const { role } = req.body; // New role
+    
+        if (!role) {
+            return res.status(400).json({ error: "Role is required" });
+        }
+    
+        const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester"];
+        if (!validRoles.includes(role)) {
+            return res.status(400).json({ error: "Invalid role specified" });
+        }
+    
+        UsersModel.updateUserRole(id, role, (err, result) => {
+            if (err) {
+                console.error("🚨 Error updating user role:", err);
+                return res.status(500).json({ error: "Internal Server Error" });
+            }
+    
+            if (result.error) {
+                return res.status(404).json(result);
+            }
+    
+            res.json(result);
+        });
+    };
+
 }
 
 export default UsersController;

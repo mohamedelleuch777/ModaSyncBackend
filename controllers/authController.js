@@ -13,8 +13,10 @@ class AuthController {
             const { name, email, phone, password, role } = req.body;
             const hashedPassword = await hashPassword(password);
             const user = await UsersModel.createUser(name, email, phone, hashedPassword, role);
+            console.log("✅ Register succeeded", email, phone);
             res.status(201).json(user);
         } catch (error) {
+            console.log("❌ Register failed");
             res.status(500).json({ error: error.message });
         }
     }
@@ -47,7 +49,7 @@ class AuthController {
                 return res.status(400).json({ error: 'Invalid credentials' });
             }
 
-            const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: TOKEN_EXPIRE_AFTER });
+            const token = jwt.sign({ id: user.id, email: user.email, phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: TOKEN_EXPIRE_AFTER });
             console.log('✅ Login successful. userId:', user.id);
             res.json({ token });
         } catch (error) {

@@ -2,7 +2,7 @@ import express from 'express';
 import UsersController from '../controllers/usersController.js';
 import exportedFunctions from '../middlewares/authMiddlewares.js';
 
-const { authenticateToken } = exportedFunctions;
+const { authenticateToken, isManager } = exportedFunctions;
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.get('/email/:email', authenticateToken, UsersController.getUserByEmail);
 router.get('/phone/:phone', authenticateToken, UsersController.getUserByPhone);
 router.delete('/:id', authenticateToken, UsersController.deleteUser);
 router.put('/:id', authenticateToken, UsersController.editUser);
+// ✅ Secure route: Only managers can change user roles
+router.put("/role/:id", authenticateToken, isManager, UsersController.updateUserRole);
 
 
 export default router;

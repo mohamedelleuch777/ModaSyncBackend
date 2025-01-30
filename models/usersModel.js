@@ -111,6 +111,24 @@ class UsersModel {
             });
         });
     }
+
+    static updateUserRole = (userId, newRole, callback) => {
+        const stmt = connection.prepare("UPDATE users SET role = ? WHERE id = ?");
+    
+        stmt.run(newRole, userId, function (err) {
+            stmt.finalize(); // Close statement to prevent memory leaks
+    
+            if (err) {
+                return callback(err, null);
+            }
+    
+            if (this.changes === 0) {
+                return callback(null, { error: "User not found" });
+            }
+    
+            callback(null, { message: "User role updated successfully", userId, newRole });
+        });
+    };
     
 }
 
