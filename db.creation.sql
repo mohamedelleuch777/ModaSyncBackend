@@ -1,8 +1,9 @@
--- Collections Table
+-- Collections definition
 CREATE TABLE Collections (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     "name" TEXT,
-    description TEXT
+    description TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- SubCollections Table

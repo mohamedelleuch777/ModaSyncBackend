@@ -1,5 +1,5 @@
 // import UsersModel from '@models/usersModel';
-import UsersModel from "../models/authModel.js";
+import AuthModel from "../models/authModel.js";
 import FUNCTIONS from '../utils/hash.js';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, TOKEN_EXPIRE_AFTER } from '../config/env.js';
@@ -12,7 +12,7 @@ class AuthController {
         try {
             const { name, email, phone, password, role } = req.body;
             const hashedPassword = await hashPassword(password);
-            const user = await UsersModel.createUser(name, email, phone, hashedPassword, role);
+            const user = await AuthModel.createUser(name, email, phone, hashedPassword, role);
             console.log("✅ Register succeeded", email, phone);
             res.status(201).json(user);
         } catch (error) {
@@ -31,9 +31,9 @@ class AuthController {
 
             let user = null;
             if (emailRegex.test(emailOrPhone)) {
-                user = await UsersModel.getUserByEmail(emailOrPhone, true);
+                user = await AuthModel.getUserByEmail(emailOrPhone, true);
             } else if (phoneRegex.test(emailOrPhone)) {
-                user = await UsersModel.getUserByPhone(emailOrPhone, true);
+                user = await AuthModel.getUserByPhone(emailOrPhone, true);
             } else {
                 console.log("❌ Invalid email or phone format:", emailOrPhone);
                 return res.status(400).json({ error: 'Invalid email or phone format' });

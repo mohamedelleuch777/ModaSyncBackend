@@ -2,8 +2,6 @@
 import UsersModel from "../models/usersModel.js";
 import FUNCTIONS from '../utils/hash.js';
 
-const { hashPassword, comparePassword } = FUNCTIONS;
-
 class UsersController {
 
     // Get All Users

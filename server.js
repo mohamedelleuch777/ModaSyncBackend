@@ -2,6 +2,7 @@ import express from 'express';
 import { PORT } from './config/env.js';
 import userRoutes from './routes/users.js';
 import authRoutes from './routes/auth.js';
+import collectionsRoutes from './routes/collection.js';
 
 const app = express();
 app.use(express.json());
@@ -9,6 +10,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use("/api/collections", collectionsRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
