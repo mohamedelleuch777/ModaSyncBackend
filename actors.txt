@@ -1,0 +1,5 @@
+Stylist ✅
+Manager ✅
+Modelist ❌ → Fashion Designer
+ExecutiveWorker ❌ → Production Worker
+Tester ❌ → Quality Inspector
