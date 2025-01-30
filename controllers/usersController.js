@@ -1,40 +1,10 @@
 // import UsersModel from '@models/usersModel';
 import UsersModel from "../models/usersModel.js";
 import FUNCTIONS from '../utils/hash.js';
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../config/env.js';
 
 const { hashPassword, comparePassword } = FUNCTIONS;
 
 class UsersController {
-    // Register User
-    static async register(req, res) {
-        try {
-            const { name, email, phone, password, role } = req.body;
-            const hashedPassword = await hashPassword(password);
-            const user = await UsersModel.createUser(name, email, phone, hashedPassword, role);
-            res.status(201).json(user);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
-
-    // Login User
-    static async login(req, res) {
-        try {
-            const { email, password } = req.body;
-            const user = await UsersModel.getUserByEmail(email);
-            if (!user) return res.status(400).json({ error: 'Invalid credentials' });
-
-            const isMatch = await comparePassword(password, user.password);
-            if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
-
-            const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-            res.json({ token });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
 
     // Get All Users
     static async getAllUsers(req, res) {
@@ -69,6 +39,41 @@ class UsersController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    // Delete User
+    static async deleteUser(req, res) {
+        try {
+            const { id } = req.params;
+            const result = await UsersModel.deleteUserById(id);
+
+            if (!result) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // Edit User
+    static async editUser(req, res) {
+        try {
+            const { id } = req.params;
+            const { name, email, phone } = req.body;
+
+            const result = await UsersModel.updateUserById(id, name, email, phone);
+
+            if (!result) {
+                return res.status(404).json({ error: 'User not found or no fields to update' });
+            }
+
+            res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
 }
 
 export default UsersController;

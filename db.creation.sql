@@ -1,63 +1,52 @@
--- database.main.Collections definition
+-- Collections Table
+CREATE TABLE Collections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT,
+    description TEXT
+);
 
-CREATE TABLE Collections(id INTEGER PRIMARY KEY,
-"name" VARCHAR,
-description VARCHAR);
+-- SubCollections Table
+CREATE TABLE SubCollections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    collection_id INTEGER,
+    "name" TEXT,
+    FOREIGN KEY (collection_id) REFERENCES Collections(id) ON DELETE CASCADE
+);
 
--- database.main.Comments definition
+-- Samples Table
+CREATE TABLE Samples (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subcollection_id INTEGER,
+    status TEXT CHECK(status IN ('new', 'in_review', 'external_task', 'production', 'testing', 
+                                 'accepted', 'rejected', 'readjustment', 'cut_phase', 'preparing_traces', 'ready')),
+    timeline TEXT, -- JSON stored as TEXT
+    FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
+);
 
-CREATE TABLE "Comments"(id INTEGER PRIMARY KEY,
-picture_id INTEGER,
-commenter INTEGER,
-comment_text VARCHAR,
-FOREIGN KEY (commenter) REFERENCES Users(id),
-FOREIGN KEY (picture_id) REFERENCES Pictures(id));
+-- Pictures Table
+CREATE TABLE Pictures (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sample_id INTEGER,
+    image_url TEXT,
+    FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
+);
 
--- database.main.Pictures definition
+-- Users Table
+CREATE TABLE Users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT,
+    email TEXT UNIQUE,
+    phone TEXT UNIQUE,
+    "password" TEXT,
+    role TEXT CHECK(role IN ('Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester'))
+);
 
-CREATE TABLE Pictures(id INTEGER PRIMARY KEY,
-sample_id INTEGER,
-image_url VARCHAR,
-FOREIGN KEY (sample_id) REFERENCES Samples(id));
-
--- database.main.Samples definition
-
-CREATE TABLE Samples(id INTEGER PRIMARY KEY,
-subcollection_id INTEGER,
-status ENUM('new',
-'in_review',
-'external_task',
-'production',
-'testing',
-'accepted',
-'rejected',
-'readjustment',
-'cut_phase',
-'preparing_traces',
-'ready'),
-timeline JSON,
-FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id));
-
--- database.main.SubCollections definition
-
-CREATE TABLE SubCollections(id INTEGER PRIMARY KEY,
-collection_id INTEGER,
-"name" VARCHAR,
-FOREIGN KEY (collection_id) REFERENCES Collections(id));
-
--- database.main.Users definition
-
-CREATE TABLE Users(id INTEGER DEFAULT(nextval('users_id_seq')) PRIMARY KEY,
-"name" VARCHAR,
-email VARCHAR UNIQUE,
-phone VARCHAR UNIQUE,
-"password" VARCHAR,
-"role" ENUM('Stylist',
-'Manager',
-'Modelist',
-'ExecutiveWorker',
-'Tester'));
-
-
--- database.main.Users definition
-CREATE SEQUENCE users_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 4 NO CYCLE;
+-- Comments Table
+CREATE TABLE Comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    picture_id INTEGER,
+    commenter INTEGER,
+    comment_text TEXT,
+    FOREIGN KEY (commenter) REFERENCES Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (picture_id) REFERENCES Pictures(id) ON DELETE CASCADE
+);

@@ -6,13 +6,12 @@ const { authenticateToken } = exportedFunctions;
 
 const router = express.Router();
 
-// Public Routes
-router.post('/register', UsersController.register);
-router.post('/login', UsersController.login);
-
 // Protected Routes
 router.get('/', authenticateToken, UsersController.getAllUsers);
 router.get('/email/:email', authenticateToken, UsersController.getUserByEmail);
 router.get('/phone/:phone', authenticateToken, UsersController.getUserByPhone);
+router.delete('/:id', authenticateToken, UsersController.deleteUser);
+router.put('/:id', authenticateToken, UsersController.editUser);
+
 
 export default router;

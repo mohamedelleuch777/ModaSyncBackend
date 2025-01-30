@@ -58,6 +58,60 @@ class UsersModel {
             });
         });
     }
+
+    static async deleteUserById(userId) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare('DELETE FROM users WHERE id = ?');
+            stmt.run(userId, function (err) {
+                stmt.finalize(); // Close statement
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    resolve(null); // No user found
+                } else {
+                    resolve({ message: "User deleted successfully" });
+                }
+            });
+        });
+    }
+
+    static async updateUserById(userId, name, email, phone) {
+        return new Promise(async (resolve, reject) => {
+            const updates = [];
+            const params = [];
+    
+            if (name) {
+                updates.push("name = ?");
+                params.push(name);
+            }
+            if (email) {
+                updates.push("email = ?");
+                params.push(email);
+            }
+            if (phone) {
+                updates.push("phone = ?");
+                params.push(phone);
+            }    
+            if (updates.length === 0) {
+                return resolve(null); // No updates provided
+            }
+    
+            params.push(userId);
+    
+            const stmt = connection.prepare(`UPDATE users SET ${updates.join(", ")} WHERE id = ?`);
+            stmt.run(params, function (err) {
+                stmt.finalize(); // Close statement
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    resolve(null); // No user found
+                } else {
+                    resolve({ message: "User updated successfully" });
+                }
+            });
+        });
+    }
+    
 }
 
 export default UsersModel;
