@@ -29,6 +29,32 @@ class CollectionsController {
         }
     }
 
+    // ✅ Edit a Collection
+    static async editCollection(req, res) {
+        try {
+            const { id } = req.params;
+            const { name, description } = req.body;
+
+            if (!name || !description) return res.status(400).json({ error: "Name and description are required" });
+
+            const updatedCollection = await CollectionsModel.editCollection(id, name, description);
+            res.json(updatedCollection);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // ✅ Remove a Collection
+    static async removeCollection(req, res) {
+        try {
+            const { id } = req.params;
+            const deletedCollection = await CollectionsModel.removeCollection(id);
+            res.json(deletedCollection);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
 }
 
 export default CollectionsController;
