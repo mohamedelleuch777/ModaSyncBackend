@@ -11,6 +11,8 @@ CREATE TABLE SubCollections (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     collection_id INTEGER,
     "name" TEXT,
+    description TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (collection_id) REFERENCES Collections(id) ON DELETE CASCADE
 );
 
