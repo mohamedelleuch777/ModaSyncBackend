@@ -13,6 +13,18 @@ class SamplesModel {
         });
     }
 
+    // ✅ Get active samples
+    static async getActiveSamples() {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM Samples WHERE isActive = 'true' ");
+            stmt.all((err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    }
+
     // ✅ Create a new sample
     static async createSample(subcollectionId) {
         return new Promise((resolve, reject) => {
@@ -39,8 +51,19 @@ class SamplesModel {
     static async editSample(sample_id, status) {
         return new Promise( async(resolve, reject) => {
             const validStatuses = [
-                'new', 'in_review', 'external_task', 'production', 'testing', 
-                'accepted', 'rejected', 'readjustment', 'cut_phase', 'preparing_traces', 'ready'
+                'new',                  // responsable: stylist
+                'in_review',            // responsable: Manager
+                'in_development',       // responsable: Modelist
+                'development_done',     // responsable: Stylist
+                'external_task',        // responsable: Stylist
+                'in_production',        // responsable: ExecutiveWorker
+                'testing',              // responsable: Tester
+                'accepted',             // responsable: Modelist
+                'rejected',             // responsable: isActive = false
+                'readjustment',         // responsable: Modelist
+                'cut_phase',            // responsable: Modelist
+                'preparing_traces',     // responsable: Modelist
+                'ready'                 // responsable: isActive = false
             ];
 
             if (!validStatuses.includes(status)) {

@@ -1,6 +1,5 @@
 // import UsersModel from '@models/usersModel';
 import UsersModel from "../models/usersModel.js";
-import FUNCTIONS from '../utils/hash.js';
 
 class UsersController {
 

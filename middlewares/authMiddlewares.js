@@ -22,8 +22,13 @@ const isManager = (req, res, next) => {
     next(); // User is a manager, proceed
 };
 
+const whoAmI = (req, res, next) => {
+    return req.user.role;
+};
+
 const exportedFunctions = {
     authenticateToken,
-    isManager
+    isManager,
+    whoAmI
 }
 export default exportedFunctions;

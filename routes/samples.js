@@ -6,8 +6,13 @@ const router = express.Router();
 
 const { authenticateToken, isManager } = exportedFunctions;
 
-router.get("/:subcollectionId", authenticateToken, SamplesController.getAllSamples);
+// static routes
 router.post("/", authenticateToken, SamplesController.createSample);
+router.get("/availableSamples", authenticateToken, SamplesController.fetchAvailableSamples);
+
+// dynamic routes
+router.get("/:subcollectionId", authenticateToken, SamplesController.getAllSamples);
 router.put("/:sample_id", authenticateToken, SamplesController.updateSampleStatus);
+router.delete("/:sample_id", authenticateToken, SamplesController.deleteSampleById);
 
 export default router;

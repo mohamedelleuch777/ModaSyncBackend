@@ -13,6 +13,9 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
     }
 });
 
+const res = db.run("PRAGMA foreign_keys = ON;");
+console.log("DELETE FOREIGN KEYS IS:", res ? "ON ✅" : "OFF ❌");
+
 const connection = db;
 
 export default connection;

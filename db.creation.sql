@@ -20,6 +20,7 @@ CREATE TABLE SubCollections (
 CREATE TABLE Samples (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     subcollection_id INTEGER,
+    isActive TEXT CHECK(isActive IN ('true', 'false')) DEFAULT 'true',
     FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
 );
 
@@ -27,8 +28,21 @@ CREATE TABLE Samples (
 CREATE TABLE Timeline (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sample_id INTEGER,
-    status TEXT CHECK(status IN ('new', 'in_review', 'external_task', 'production', 'testing', 
-                                 'accepted', 'rejected', 'readjustment', 'cut_phase', 'preparing_traces', 'ready')),
+    status TEXT CHECK(status IN (
+        'new',              
+        'in_review',        
+        'in_development',   
+        'development_done', 
+        'external_task',    
+        'in_production',    
+        'testing',          
+        'accepted',         
+        'rejected',         
+        'readjustment',     
+        'cut_phase',        
+        'preparing_traces', 
+        'ready'             
+    )),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
 );
