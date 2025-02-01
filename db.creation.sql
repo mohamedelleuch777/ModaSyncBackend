@@ -50,6 +50,7 @@ CREATE TABLE Timeline (
 -- Pictures Table
 CREATE TABLE Pictures (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
     sample_id INTEGER,
     image_url TEXT,
     FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
@@ -73,4 +74,11 @@ CREATE TABLE Comments (
     comment_text TEXT,
     FOREIGN KEY (commenter) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (picture_id) REFERENCES Pictures(id) ON DELETE CASCADE
+);
+
+-- External Services Provider Table
+CREATE TABLE ExternalServicesProvider (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT,
+    phone TEXT UNIQUE,
 );
