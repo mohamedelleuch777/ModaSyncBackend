@@ -8,7 +8,6 @@ const { authenticateToken, isManager } = exportedFunctions;
 
 router.get("/:subcollectionId", authenticateToken, SamplesController.getAllSamples);
 router.post("/", authenticateToken, SamplesController.createSample);
-router.put("/:id", authenticateToken, SamplesController.editSample);
-router.delete("/:id", authenticateToken, SamplesController.removeSample);
+router.put("/:sample_id", authenticateToken, SamplesController.updateSampleStatus);
 
 export default router;

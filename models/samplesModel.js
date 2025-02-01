@@ -36,23 +36,51 @@ class SamplesModel {
     }
 
     // ✅ Edit an existing sample
-    static async editSample(id, status, timeline) {
-        return new Promise((resolve, reject) => {
+    static async editSample(sample_id, status) {
+        return new Promise( async(resolve, reject) => {
             const validStatuses = [
                 'new', 'in_review', 'external_task', 'production', 'testing', 
                 'accepted', 'rejected', 'readjustment', 'cut_phase', 'preparing_traces', 'ready'
             ];
 
             if (!validStatuses.includes(status)) {
-                return reject({ error: "Invalid status provided" });
+                return reject({ message: "Invalid status provided" });
             }
 
-            const stmt = connection.prepare("UPDATE Samples SET status = ?, timeline = ? WHERE id = ?");
-            stmt.run(status, JSON.stringify(timeline || []), id, function (err) {
+            if (status === (await this.getLastSampleTimeline(sample_id)).status) {
+                return reject({ message: "Sample is already in this status" });
+            }
+
+            const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status) VALUES (?, ?)");
+            stmt.run(sample_id, status, function (err) {
                 stmt.finalize();
                 if (err) reject(err);
-                else if (this.changes === 0) reject({ error: "Sample not found" });
-                else resolve({ message: "Sample updated successfully", id, status, timeline });
+                else if (this.changes === 0) reject({ message: "Sample not found" });
+                else resolve({ message: "Sample updated successfully", sample_id, status });
+            });
+        });
+    }
+
+    // ✅ Get last sample's timeline
+    static async getLastSampleTimeline(sample_id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM Timeline WHERE sample_id = ? ORDER BY timestamp DESC LIMIT 1");
+            stmt.all(sample_id, (err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows[0]);
+            });
+        });
+    }
+
+    // ✅ Get sample by ID
+    static async getSampleById(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM Samples WHERE id = ?");
+            stmt.all(id, (err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows[0]);
             });
         });
     }

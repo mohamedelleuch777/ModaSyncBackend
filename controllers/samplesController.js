@@ -28,33 +28,23 @@ class SamplesController {
         }
     }
 
-    // ✅ Edit a sample
-    static async editSample(req, res) {
+    // ✅ Update sample Status
+    static async updateSampleStatus(req, res) {
         try {
-            const { id } = req.params;
-            const { status, timeline } = req.body;
+            const { sample_id } = req.params;
+            const { status } = req.body;
 
             if (!status) {
                 return res.status(400).json({ error: "Status is required" });
             }
 
-            const updatedSample = await SamplesModel.editSample(id, status, timeline);
+            const updatedSample = await SamplesModel.editSample(sample_id, status);
             res.json(updatedSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 
-    // ✅ Remove a sample
-    static async removeSample(req, res) {
-        try {
-            const { id } = req.params;
-            const deletedSample = await SamplesModel.removeSample(id);
-            res.json(deletedSample);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
 }
 
 export default SamplesController;
