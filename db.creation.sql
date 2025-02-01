@@ -16,14 +16,21 @@ CREATE TABLE SubCollections (
     FOREIGN KEY (collection_id) REFERENCES Collections(id) ON DELETE CASCADE
 );
 
--- Samples Table
+-- Samples definition
 CREATE TABLE Samples (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     subcollection_id INTEGER,
+    FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
+);
+
+-- Timeline definition
+CREATE TABLE Timeline (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sample_id INTEGER,
     status TEXT CHECK(status IN ('new', 'in_review', 'external_task', 'production', 'testing', 
                                  'accepted', 'rejected', 'readjustment', 'cut_phase', 'preparing_traces', 'ready')),
-    timeline TEXT, -- JSON stored as TEXT
-    FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
 );
 
 -- Pictures Table
