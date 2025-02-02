@@ -53,6 +53,8 @@ CREATE TABLE Pictures (
     title TEXT,
     sample_id INTEGER,
     image_url TEXT,
+    image_path TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
 );
 

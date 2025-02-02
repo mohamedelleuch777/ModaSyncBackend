@@ -15,13 +15,13 @@ class PicturesModel {
     }
 
     // ✅ Add pictures to sample
-    static async addPictures(sampleId, title, imageUrl) {
+    static async addPictures(sampleId, title, imageUrl, imagePath) {
         return new Promise((resolve, reject) => {
-            const stmt = connection.prepare("INSERT INTO Pictures (sample_id, title, image_url) VALUES (?, ?, ?)");
-            stmt.all(sampleId, (err, rows) => {
+            const stmt = connection.prepare("INSERT INTO Pictures (sample_id, title, image_url, image_path) VALUES (?, ?, ?, ?)");
+            stmt.all(sampleId, title, imageUrl, imagePath, (err, rows) => {
                 stmt.finalize();
                 if (err) reject(err);
-                else resolve(rows);
+                else resolve({ message: "Picture added successfully", imageUrl: imageUrl });
             });
         });
     }
@@ -29,11 +29,15 @@ class PicturesModel {
     // ✅ Delete a picture
     static async deletePicture(id) {
         return new Promise((resolve, reject) => {
-            const stmt = connection.prepare("DELETE FROM Pictures WHERE id = ?");
-            stmt.all(id, (err, rows) => {
-                stmt.finalize();
-                if (err) reject(err);
-                else resolve(rows);
+            const stmt = connection.prepare("DELETE FROM Pictures WHERE id = ? RETURNING *");
+            stmt.all(id, function(err, rows) {
+              stmt.finalize();
+              if (err) {
+                reject(err);
+              } else {
+                const deletedItem = rows[0];
+                resolve({changes: this.changes, deletedItem: deletedItem}); // 'this.changes' contains the number of rows deleted
+              }
             });
         });
     }
