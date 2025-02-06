@@ -34,12 +34,13 @@ class SamplesModel {
                 stmt.finalize();
                 if (err) reject(err);
                 else {
+                    const lastCreatedSample = this.lastID;
                     const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status) VALUES (?, ?)");
-                    stmt.run(subcollectionId, 'new', function (err) {
+                    stmt.run(lastCreatedSample, 'new', function (err) {
                         stmt.finalize();
                         if (err) reject(err);
                         else {
-                            resolve({ id: this.lastID, subcollectionId, 'status': 'new', timestamp: Date.now() });
+                            resolve({ id: this.lastID, lastCreatedSample, 'status': 'new', timestamp: Date.now() });
                         }
                     });
                 }
@@ -92,6 +93,18 @@ class SamplesModel {
                 stmt.finalize();
                 if (err) reject(err);
                 else resolve(rows[0]);
+            });
+        });
+    }
+
+    // ✅ Get all sample's timeline
+    static async getAllSampleTimeline(sample_id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM Timeline WHERE sample_id = ? ORDER BY timestamp DESC");
+            stmt.all(sample_id, (err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows);
             });
         });
     }

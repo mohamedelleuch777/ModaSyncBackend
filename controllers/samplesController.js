@@ -63,11 +63,13 @@ class SamplesController {
                         const availableSamples = await SamplesModel.getActiveSamples();
                         const result = [];
                         for (const sample of availableSamples) {
-                            const currentTimeLine = await SamplesModel.getLastSampleTimeline(sample.id);
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
                             result.push({
                                 id: sample.id,
                                 subcollectionId: sample.subcollection_id,
                                 isActive: sample.is_active,
+                                status: currentTimeLine[0].status,
                                 timeline: currentTimeLine
                             });
                         }
@@ -79,12 +81,14 @@ class SamplesController {
                         const availableSamples = await SamplesModel.getActiveSamples();
                         const result = [];
                         for (const sample of availableSamples) {
-                            const currentTimeLine = await SamplesModel.getLastSampleTimeline(sample.id);
-                            if(['new', 'development_done', 'external_task'].includes(currentTimeLine.status)) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            if(['new', 'development_done', 'external_task'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
+                                    status: currentTimeLine[0].status,
                                     timeline: currentTimeLine
                                 });
                             }
@@ -97,12 +101,14 @@ class SamplesController {
                         const availableSamples = await SamplesModel.getActiveSamples();
                         const result = [];
                         for (const sample of availableSamples) {
-                            const currentTimeLine = await SamplesModel.getLastSampleTimeline(sample.id);
-                            if(['in_development', 'accepted', 'readjustment', 'cut_phase', 'preparing_traces'].includes(currentTimeLine.status)) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            if(['in_development', 'accepted', 'readjustment', 'cut_phase', 'preparing_traces'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
+                                    status: currentTimeLine[0].status,
                                     timeline: currentTimeLine
                                 });
                             }
@@ -115,12 +121,14 @@ class SamplesController {
                         const availableSamples = await SamplesModel.getActiveSamples();
                         const result = [];
                         for (const sample of availableSamples) {
-                            const currentTimeLine = await SamplesModel.getLastSampleTimeline(sample.id);
-                            if(['in_production'].includes(currentTimeLine.status)) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            if(['in_production'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
+                                    status: currentTimeLine[0].status,
                                     timeline: currentTimeLine
                                 });
                             }
@@ -133,12 +141,14 @@ class SamplesController {
                         const availableSamples = await SamplesModel.getActiveSamples();
                         const result = [];
                         for (const sample of availableSamples) {
-                            const currentTimeLine = await SamplesModel.getLastSampleTimeline(sample.id);
-                            if(['testing'].includes(currentTimeLine.status)) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            if(['testing'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
+                                    status: currentTimeLine[0].status,
                                     timeline: currentTimeLine
                                 });
                             }

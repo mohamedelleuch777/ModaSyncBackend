@@ -26,9 +26,14 @@ const whoAmI = (req, res, next) => {
     return req.user.role;
 };
 
+const getCurrentUserID = (req, res, next) => {
+    return req.user.id;
+};
+
 const exportedFunctions = {
     authenticateToken,
     isManager,
-    whoAmI
+    whoAmI,
+    getCurrentUserID
 }
 export default exportedFunctions;

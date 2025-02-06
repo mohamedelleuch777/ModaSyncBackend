@@ -72,9 +72,10 @@ CREATE TABLE Users (
 CREATE TABLE Comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     picture_id INTEGER,
-    commenter INTEGER,
+    comment_owner INTEGER,
     comment_text TEXT,
-    FOREIGN KEY (commenter) REFERENCES Users(id) ON DELETE CASCADE,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comment_owner) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (picture_id) REFERENCES Pictures(id) ON DELETE CASCADE
 );
 
