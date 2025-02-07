@@ -1,5 +1,9 @@
 import CollectionsModel from '../models/collectionsModel.js';
+import { sseEmitter } from '../middlewares/sseEmitterMiddlewares.js';
+import exportedFunctions from '../middlewares/authMiddlewares.js';
 // const { hashPassword, comparePassword } = FUNCTIONS;
+
+const {getCurrentUserID } = exportedFunctions;
 
 class CollectionsController {
 
@@ -17,12 +21,20 @@ class CollectionsController {
     static async createCollection(req, res) {
         try {
             const { name, description } = req.body;
+            const userId = await getCurrentUserID(req, res);
 
             if (!name || !description) {
                 return res.status(400).json({ error: "Name and description are required" });
             }
 
             const newCollection = await CollectionsModel.createCollection(name, description);
+            sseEmitter.emit('message', {
+                type: 'collection',
+                userId: userId,
+                data: newCollection, 
+                action: 'create',
+                message: "New Collection Created"
+            });
             res.status(201).json(newCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });

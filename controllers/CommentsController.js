@@ -1,4 +1,5 @@
 import CommentsModel from '../models/CommentsModel.js';
+import { sseEmitter } from '../middlewares/sseEmitterMiddlewares.js';
 // const { hashPassword, comparePassword } = FUNCTIONS;
 
 import exportedFunctions from '../middlewares/authMiddlewares.js';
@@ -24,6 +25,13 @@ class CommentsController {
             const { picture_id, comment_text } = req.body;
             const comment_owner = await getCurrentUserID(req, res);
             const newComment = await CommentsModel.addComment(picture_id, comment_text, comment_owner);
+            sseEmitter.emit('message', {
+                type: 'comment',
+                userId: comment_owner,
+                data: newComment, 
+                action: 'create',
+                message: "New Comment Created"
+            });
             res.status(201).json(newComment);
         } catch (error) {
             res.status(500).json({ error: error.message });
