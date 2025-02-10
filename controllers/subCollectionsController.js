@@ -1,4 +1,5 @@
 import SubCollectionsModel from "../models/subCollectionsModel.js";
+import SamplesModel from "../models/samplesModel.js";
 
 class SubCollectionsController {
     // ✅ Get all sub-collections for a given collection ID
@@ -6,6 +7,12 @@ class SubCollectionsController {
         try {
             const { collectionId } = req.params;
             const subCollections = await SubCollectionsModel.getAllSubCollections(collectionId);
+
+            // get the cound of samples for this given sub-collection
+            for (const subCollection of subCollections) {
+                const samples = await SamplesModel.getAllSamples(subCollection.id);
+                subCollection.count = samples.length;
+            }
             res.json(subCollections);
         } catch (error) {
             res.status(500).json({ error: error.message });
