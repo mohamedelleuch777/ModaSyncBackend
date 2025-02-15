@@ -20,14 +20,14 @@ class CollectionsController {
     // ✅ Create a New Collection
     static async createCollection(req, res) {
         try {
-            const { name, description } = req.body;
+            const { name, description, imageUrl } = req.body;
             const userId = await getCurrentUserID(req, res);
 
             if (!name || !description) {
                 return res.status(400).json({ error: "Name and description are required" });
             }
 
-            const newCollection = await CollectionsModel.createCollection(name, description);
+            const newCollection = await CollectionsModel.createCollection(name, description, imageUrl);
             sseEmitter.emit('message', {
                 type: 'collection',
                 userId: userId,

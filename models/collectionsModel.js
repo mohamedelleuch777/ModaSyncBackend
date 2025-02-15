@@ -17,15 +17,15 @@ class CollectionsModel {
     }
 
     // ✅ Create a New Collection
-    static async createCollection(name, description) {
+    static async createCollection(name, description, imageUrl) {
         return new Promise((resolve, reject) => {
-            const stmt = connection.prepare("INSERT INTO Collections (name, description) VALUES (?, ?)");
-            stmt.run(name, description, function (err) {
+            const stmt = connection.prepare("INSERT INTO Collections (name, description, image) VALUES (?, ?, ?)");
+            stmt.run(name, description, imageUrl, function (err) {
                 stmt.finalize(); // Close statement
                 if (err) {
                     reject(err);
                 } else {
-                    resolve({ id: this.lastID, name, description });
+                    resolve({ id: this.lastID, name, description, imageUrl });
                 }
             });
         });
