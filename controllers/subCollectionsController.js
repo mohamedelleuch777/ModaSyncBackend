@@ -22,12 +22,12 @@ class SubCollectionsController {
     // ✅ Create a new sub-collection
     static async createSubCollection(req, res) {
         try {
-            const { collectionId, name, description } = req.body;
+            const { collectionId, name, description, imageUrl } = req.body;
             if (!collectionId || !name || !description) {
                 return res.status(400).json({ error: "Collection ID, name, and description are required" });
             }
 
-            const newSubCollection = await SubCollectionsModel.createSubCollection(collectionId, name, description);
+            const newSubCollection = await SubCollectionsModel.createSubCollection(collectionId, name, description, imageUrl);
             res.status(201).json(newSubCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
