@@ -4,7 +4,7 @@ class SubCollectionsModel {
     // ✅ Get all sub-collections for a given collection ID
     static async getAllSubCollections(collectionId) {
         return new Promise((resolve, reject) => {
-            const stmt = connection.prepare("SELECT * FROM SubCollections WHERE collection_id = ?");
+            const stmt = connection.prepare("SELECT * FROM SubCollections WHERE collection_id = ? ");
             stmt.all(collectionId, (err, rows) => {
                 stmt.finalize();
                 if (err) reject(err);

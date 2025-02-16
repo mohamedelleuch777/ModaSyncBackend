@@ -4,7 +4,7 @@ class CollectionsModel {
 
     static async getAllCollections() {
         return new Promise((resolve, reject) => {
-            const stmt = connection.prepare('SELECT * FROM Collections WHERE 1');
+            const stmt = connection.prepare('SELECT * FROM Collections WHERE 1 ORDER BY id DESC');
             stmt.all((err, rows) => {
                 stmt.finalize(); // Close the statement to avoid memory leaks
                 if (err) {
