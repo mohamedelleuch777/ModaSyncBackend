@@ -22,6 +22,8 @@ CREATE TABLE SubCollections (
 CREATE TABLE Samples (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     subcollection_id INTEGER,
+    name TEXT,
+    image TEXT,
     isActive TEXT CHECK(isActive IN ('true', 'false')) DEFAULT 'true',
     FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
 );

@@ -26,11 +26,11 @@ class SamplesModel {
     }
 
     // ✅ Create a new sample
-    static async createSample(subcollectionId) {
+    static async createSample(subcollectionId, name, imageUrl) {
         return new Promise((resolve, reject) => {
 
-            const stmt = connection.prepare("INSERT INTO Samples (subcollection_id) VALUES (?)");
-            stmt.run(subcollectionId, function (err) {
+            const stmt = connection.prepare("INSERT INTO Samples (subcollection_id, name, image) VALUES (?, ?, ?)");
+            stmt.run(subcollectionId, name, imageUrl, function (err) {
                 stmt.finalize();
                 if (err) reject(err);
                 else {

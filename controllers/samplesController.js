@@ -18,7 +18,7 @@ class SamplesController {
     // ✅ Create a new sample
     static async createSample(req, res) {
         try {
-            const { subcollectionId } = req.body;
+            const { subcollectionId, name, imageUrl } = req.body;
 
             const userRole = await whoAmI(req, res);
             if (userRole !== "Stylist") {
@@ -26,10 +26,14 @@ class SamplesController {
             }
 
             if (!subcollectionId ) {
-                return res.status(400).json({ error: "Subcollection ID and status are required" });
+                return res.status(400).json({ error: "Subcollection ID are required" });
             }
 
-            const newSample = await SamplesModel.createSample(subcollectionId);
+            if (!name || !imageUrl) {
+                return res.status(400).json({ error: "Sample name and image URL are required" });
+            }
+
+            const newSample = await SamplesModel.createSample(subcollectionId, name, imageUrl);
             res.status(201).json(newSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
