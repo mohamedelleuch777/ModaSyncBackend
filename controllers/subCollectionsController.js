@@ -1,5 +1,6 @@
 import SubCollectionsModel from "../models/subCollectionsModel.js";
 import SamplesModel from "../models/samplesModel.js";
+import { sseEmitter } from "../middlewares/sseEmitterMiddlewares.js";
 
 class SubCollectionsController {
     // ✅ Get all sub-collections for a given collection ID
@@ -28,6 +29,13 @@ class SubCollectionsController {
             }
 
             const newSubCollection = await SubCollectionsModel.createSubCollection(collectionId, name, description, imageUrl);
+            sseEmitter.emit('message', {
+            type: 'sub-collection',
+            name: name,
+            data: newSubCollection, 
+            action: 'create',
+            message: "New Sub-Collection Created"
+        });
             res.status(201).json(newSubCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
