@@ -17,6 +17,17 @@ class CollectionsController {
         }
     }
 
+    // Get All Users
+    static async getCollectionById(req, res) {
+        try {
+            const { id } = req.params;
+            const collection = await CollectionsModel.getCollectionById(id);
+            res.json(collection);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
     // ✅ Create a New Collection
     static async createCollection(req, res) {
         try {

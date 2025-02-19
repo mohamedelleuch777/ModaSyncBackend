@@ -16,6 +16,20 @@ class CollectionsModel {
         });
     }
 
+    static async getCollectionById(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare('SELECT * FROM Collections WHERE id = ? ORDER BY id DESC');
+            stmt.all(id, (err, rows) => {
+                stmt.finalize(); // Close the statement to avoid memory leaks
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                }
+            });
+        });
+    }
+
     // ✅ Create a New Collection
     static async createCollection(name, description, imageUrl) {
         return new Promise((resolve, reject) => {
