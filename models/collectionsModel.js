@@ -24,7 +24,7 @@ class CollectionsModel {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(rows);
+                    resolve(rows[0]);
                 }
             });
         });
