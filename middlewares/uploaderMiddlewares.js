@@ -1,10 +1,11 @@
 import multer from 'multer';
 import path from 'path';
+import { STATIC_PATH } from "../config/env.js";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       // Define the destination folder for uploads.
-      cb(null, 'uploads/img/');
+      cb(null, STATIC_PATH);
     },
     filename: (req, file, cb) => {
       // Create a unique file name with original file extension.
