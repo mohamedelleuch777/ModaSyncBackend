@@ -14,13 +14,13 @@ class SubCollectionsModel {
     }
 
     // ✅ Create a new sub-collection
-    static async createSubCollection(collectionId, name, description, imageUrl) {
+    static async createSubCollection(collectionId, name, description, image) {
         return new Promise((resolve, reject) => {
             const stmt = connection.prepare("INSERT INTO SubCollections (collection_id, name, description, image) VALUES (?, ?, ?, ?)");
-            stmt.run(collectionId, name, description, function (err) {
+            stmt.run(collectionId, name, description, image, function (err) {
                 stmt.finalize();
                 if (err) reject(err);
-                else resolve({ id: this.lastID, collectionId, name, description, imageUrl });
+                else resolve({ id: this.lastID, collectionId, name, description, image });
             });
         });
     }
