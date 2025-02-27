@@ -8,12 +8,14 @@ const CONFIG = {
     JWT_SECRET: process.env.JWT_SECRET || "mysecretkey",
     TOKEN_EXPIRE_AFTER : process.env.TOKEN_EXPIRE_AFTER || "1h",
     STATIC_URL: process.env.STATIC_URL || "//static.xilyor.com",
-    STATIC_PATH: process.env.STATIC_PATH || "//static.xilyor.com"
+    STATIC_PATH: process.env.STATIC_PATH || "uploads/img"
 };
 
 export default CONFIG;
 export const { PORT,
      DB_PATH, 
      JWT_SECRET, 
-     TOKEN_EXPIRE_AFTER 
+     TOKEN_EXPIRE_AFTER ,
+     STATIC_URL,
+     STATIC_PATH
 } = CONFIG;
