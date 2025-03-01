@@ -15,8 +15,8 @@ sshpass -p $SSH_PASSWORD scp -P "$PORT" "$SERVER:$REMOTE_DIR/$DB_FILE" "../datab
 
 # Check if SCP was successful
 if [ $? -eq 0 ]; then
-echo "✅ Successfully copied $DB_FILE!"
+    echo "✅ Successfully copied $DB_FILE to local machine!"
 else
-echo "❌ Error: Failed to copy $DB_FILE. Aborting deployment!"
-exit 1
+    echo "❌ Error: Failed to copy $DB_FILE. Aborting deployment!"
+    exit 1
 fi
