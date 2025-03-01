@@ -75,12 +75,12 @@ CREATE TABLE Users (
 -- Comments Table
 CREATE TABLE Comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    picture_id INTEGER,
+    sample_id INTEGER,
     comment_owner INTEGER,
     comment_text TEXT,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (comment_owner) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (picture_id) REFERENCES Pictures(id) ON DELETE CASCADE
+    FOREIGN KEY (sample_id) REFERENCES Pictures(id) ON DELETE CASCADE
 );
 
 -- External Services Provider Table

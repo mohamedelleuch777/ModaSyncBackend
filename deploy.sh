@@ -40,5 +40,18 @@ for FILE in "${FILES[@]}"; do
   fi
 done
 
+# 📢 Restarting the remote service Message
+echo "🚀 Restarting the remote service $SERVER -> modaSync.service ..."
+# restart the distant service
+sshpass -p "$SSHPASS" ssh -p "$PORT" "$SERVER" "sudo systemctl restart modaSync.service"
+
+# check the restart service returned value
+if [ $? -eq 0 ]; then
+  echo "✅ Successfully restarted the service!"
+else
+  echo "❌ Error: Failed to restart the service. Aborting deployment!"
+  exit 1
+fi
+
 # 🎉 Deployment Successful
 echo "🎉 Deployment completed successfully! Your files are now on the server."
