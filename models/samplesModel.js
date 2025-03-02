@@ -121,6 +121,18 @@ class SamplesModel {
         });
     }
 
+    // ✅ Get all images that belog to this sample by ID
+    static async getAllImagesBelongingToSample(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM Pictures WHERE sample_id = ?");
+            stmt.all(id, (err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    }
+
     // ✅ Remove a sample
     static async removeSample(id) {
         return new Promise((resolve, reject) => {

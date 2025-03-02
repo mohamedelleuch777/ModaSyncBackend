@@ -5,7 +5,7 @@ SERVER="root@ssh.xilyor.com"
 PORT="49234"
 REMOTE_DIR="/var/www/api-modasync.xilyor.com/"
 FILES=("build/bundle.cjs" "package.json" "../database/database.sqlite")
-SSH_PASSWORD=J71Hs5pg3CSe34FnAi
+SSHPASS=J71Hs5pg3CSe34FnAi
 
 # 🛠 Ask user if they want to send the .env file
 read -p "📢 Do you want to include the .env file in the deployment? (yes/no): " SEND_ENV

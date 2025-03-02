@@ -9,7 +9,15 @@ class SamplesController {
         try {
             const { subcollectionId } = req.params;
             const samples = await SamplesModel.getAllSamples(subcollectionId);
-            res.json(samples);
+            const retSamples = [];
+            for(const  sample of samples) {
+                const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
+                retSamples.push({
+                    ...sample,
+                    images: imageList
+                });
+            }
+            res.json(retSamples);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -69,12 +77,14 @@ class SamplesController {
                         for (const sample of availableSamples) {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             result.push({
                                 id: sample.id,
                                 subcollectionId: sample.subcollection_id,
                                 isActive: sample.is_active,
                                 status: currentTimeLine[0].status,
-                                timeline: currentTimeLine
+                                timeline: currentTimeLine,
+                                images: imageList
                             });
                         }
                         res.json(result);
@@ -87,13 +97,15 @@ class SamplesController {
                         for (const sample of availableSamples) {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['new', 'development_done', 'external_task'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
-                                    timeline: currentTimeLine
+                                    timeline: currentTimeLine,
+                                    images: imageList
                                 });
                             }
                         }
@@ -107,13 +119,15 @@ class SamplesController {
                         for (const sample of availableSamples) {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['in_development', 'accepted', 'readjustment', 'cut_phase', 'preparing_traces'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
-                                    timeline: currentTimeLine
+                                    timeline: currentTimeLine,
+                                    images: imageList
                                 });
                             }
                         }
@@ -127,13 +141,15 @@ class SamplesController {
                         for (const sample of availableSamples) {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['in_production'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
-                                    timeline: currentTimeLine
+                                    timeline: currentTimeLine,
+                                    images: imageList
                                 });
                             }
                         }
@@ -147,13 +163,15 @@ class SamplesController {
                         for (const sample of availableSamples) {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['testing'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
-                                    timeline: currentTimeLine
+                                    timeline: currentTimeLine,
+                                    images: imageList
                                 });
                             }
                         }
