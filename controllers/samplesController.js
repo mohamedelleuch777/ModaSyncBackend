@@ -12,9 +12,11 @@ class SamplesController {
             const retSamples = [];
             for(const  sample of samples) {
                 const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
+                const timelineList = await SamplesModel.getAllSampleTimeline(sample.id);
                 retSamples.push({
                     ...sample,
-                    images: imageList
+                    images: imageList,
+                    timeline: timelineList
                 });
             }
             res.json(retSamples);
