@@ -33,7 +33,8 @@ CREATE TABLE Timeline (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sample_id INTEGER,
     status TEXT CHECK(status IN (
-        'new',              
+        'new',  
+        'edit',            
         'in_review',        
         'in_development',   
         'development_done', 
@@ -48,7 +49,9 @@ CREATE TABLE Timeline (
         'ready'             
     )),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
+    user_id INTEGER DEFAULT NULL,
+    FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
 
 -- Pictures Table

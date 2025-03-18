@@ -1,4 +1,5 @@
 import SamplesModel from "../models/samplesModel.js";
+import UsersModel from "../models/usersModel.js";
 import exportedFunctions from "../middlewares/authMiddlewares.js";
 
 const { whoAmI } = exportedFunctions;
@@ -13,10 +14,16 @@ class SamplesController {
             for(const  sample of samples) {
                 const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                 const timelineList = await SamplesModel.getAllSampleTimeline(sample.id);
+                const renderedTimelineList = [];
+                for (const timeline of timelineList) {
+                    const user = await UsersModel.getUserById(timeline.user_id);
+                    timeline.user = user;
+                    renderedTimelineList.push(timeline);
+                }
                 retSamples.push({
                     ...sample,
                     images: imageList,
-                    timeline: timelineList
+                    timeline: renderedTimelineList
                 });
             }
             res.json(retSamples);
@@ -43,7 +50,8 @@ class SamplesController {
                 return res.status(400).json({ error: "Sample name and image URL are required" });
             }
 
-            const newSample = await SamplesModel.createSample(subcollectionId, name, imageUrl);
+            const userId = exportedFunctions.getCurrentUserID(req, res);
+            const newSample = await SamplesModel.createSample(subcollectionId, name, imageUrl, userId);
             res.status(201).json(newSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -60,7 +68,8 @@ class SamplesController {
                 return res.status(400).json({ error: "Status is required" });
             }
 
-            const updatedSample = await SamplesModel.editSample(sample_id, status);
+            const currentUserID = await exportedFunctions.getCurrentUserID(req, res)
+            const updatedSample = await SamplesModel.editSample(sample_id, status, currentUserID);
             res.json(updatedSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -100,7 +109,7 @@ class SamplesController {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
-                            if(['new', 'development_done', 'external_task'].includes(currentTimeLine[0].status)) {
+                            if(['new', 'edit', 'development_done', 'external_task'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,

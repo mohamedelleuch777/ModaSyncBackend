@@ -1,4 +1,5 @@
 import connection from "../config/db.js";
+import exportedFunctions from "../middlewares/authMiddlewares.js";
 
 class SamplesModel {
     // ✅ Get all samples for a given subcollection ID
@@ -26,7 +27,7 @@ class SamplesModel {
     }
 
     // ✅ Create a new sample
-    static async createSample(subcollectionId, name, imageUrl) {
+    static async createSample(subcollectionId, name, imageUrl, currentUserID) {
         return new Promise((resolve, reject) => {
 
             const stmt = connection.prepare("INSERT INTO Samples (subcollection_id, name, image) VALUES (?, ?, ?)");
@@ -35,8 +36,8 @@ class SamplesModel {
                 if (err) reject(err);
                 else {
                     const lastCreatedSample = this.lastID;
-                    const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status) VALUES (?, ?)");
-                    stmt.run(lastCreatedSample, 'new', function (err) {
+                    const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status, user_id) VALUES (?, ?, ?)");
+                    stmt.run(lastCreatedSample, 'new', currentUserID, function (err) {
                         stmt.finalize();
                         if (err) reject(err);
                         else {
@@ -49,10 +50,11 @@ class SamplesModel {
     }
 
     // ✅ Edit an existing sample
-    static async editSample(sample_id, status) {
+    static async editSample(sample_id, status, currentUserID) {
         return new Promise( async(resolve, reject) => {
             const validStatuses = [
                 'new',                  // responsable: stylist
+                'edit',                 // responsable: stylist
                 'in_review',            // responsable: Manager
                 'in_development',       // responsable: Modelist
                 'development_done',     // responsable: Stylist
@@ -75,8 +77,8 @@ class SamplesModel {
                 return reject({ message: "Sample is already in this status" });
             }
 
-            const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status) VALUES (?, ?)");
-            stmt.run(sample_id, status, function (err) {
+            const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status, user_id) VALUES (?, ?, ?)");
+            stmt.run(sample_id, status, currentUserID, function (err) {
                 stmt.finalize();
                 if (err) reject(err);
                 else if (this.changes === 0) reject({ message: "Sample not found" });

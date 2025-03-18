@@ -11,6 +11,22 @@ class UsersModel {
         });
     }
 
+    static async getUserById(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare('SELECT * FROM users WHERE id = ?');
+            stmt.all(id, (err, rows) => {
+                stmt.finalize(); // Close the statement to avoid memory leaks
+                if (err) {
+                    reject(err);
+                } else {
+                    // Remove passwords from each user object
+                    const sanitizedRows = rows.map(({ password, ...user }) => user);
+                    resolve(sanitizedRows[0]);
+                }
+            });
+        });
+    }
+
     static async getUserByEmail(email) {
         return new Promise((resolve, reject) => {
             const stmt = connection.prepare('SELECT * FROM users WHERE email = ?');
