@@ -59,6 +59,7 @@ class SamplesModel {
                 'in_development',       // responsable: Modelist
                 'development_done',     // responsable: Stylist
                 'external_task',        // responsable: Stylist
+                'external_task_done',   // responsable: Stylist
                 'in_production',        // responsable: ExecutiveWorker
                 'testing',              // responsable: Tester
                 'accepted',             // responsable: Modelist

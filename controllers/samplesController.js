@@ -109,7 +109,7 @@ class SamplesController {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
-                            if(['new', 'edit', 'development_done', 'external_task'].includes(currentTimeLine[0].status)) {
+                            if(['new', 'edit', 'development_done', 'external_task_done', 'external_task'].includes(currentTimeLine[0].status)) {
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,

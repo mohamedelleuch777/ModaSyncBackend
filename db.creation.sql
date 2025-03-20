@@ -39,6 +39,7 @@ CREATE TABLE Timeline (
         'in_development',   
         'development_done', 
         'external_task',    
+        'external_task_done',
         'in_production',    
         'testing',          
         'accepted',         
