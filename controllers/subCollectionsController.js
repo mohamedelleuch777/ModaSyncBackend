@@ -30,12 +30,12 @@ class SubCollectionsController {
 
             const newSubCollection = await SubCollectionsModel.createSubCollection(collectionId, name, description, imageUrl);
             sseEmitter.emit('message', {
-            type: 'sub-collection',
-            name: name,
-            data: newSubCollection, 
-            action: 'create',
-            message: "New Sub-Collection Created"
-        });
+                type: 'sub-collection',
+                collectionId: collectionId,
+                data: newSubCollection, 
+                action: 'create',
+                message: "New Sub-Collection Created"
+            });
             res.status(201).json(newSubCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -51,8 +51,14 @@ class SubCollectionsController {
             if (!name || !description) {
                 return res.status(400).json({ error: "Name and description are required" });
             }
-
             const updatedSubCollection = await SubCollectionsModel.editSubCollection(id, name, description);
+            sseEmitter.emit('message', {
+                type: 'sub-collection',
+                subCollectionId: id,
+                data: updatedSubCollection, 
+                action: 'edit',
+                message: "Sub-Collection Edited"
+            });
             res.json(updatedSubCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -64,6 +70,13 @@ class SubCollectionsController {
         try {
             const { id } = req.params;
             const deletedSubCollection = await SubCollectionsModel.removeSubCollection(id);
+            sseEmitter.emit('message', {
+                type: 'sub-collection',
+                subCollectionId: id,
+                data: deletedSubCollection, 
+                action: 'remove',
+                message: "Sub-Collection Removed"
+            });
             res.json(deletedSubCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -1,6 +1,7 @@
 import SamplesModel from "../models/samplesModel.js";
 import UsersModel from "../models/usersModel.js";
 import exportedFunctions from "../middlewares/authMiddlewares.js";
+import { sseEmitter } from "../middlewares/sseEmitterMiddlewares.js";
 
 const { whoAmI } = exportedFunctions;
 
@@ -52,6 +53,13 @@ class SamplesController {
 
             const userId = exportedFunctions.getCurrentUserID(req, res);
             const newSample = await SamplesModel.createSample(subcollectionId, name, imageUrl, userId);
+            sseEmitter.emit('message', {
+                type: 'sample',
+                userId: userId,
+                data: newSample, 
+                action: 'create',
+                message: "New Sample Created"
+            });
             res.status(201).json(newSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -67,9 +75,15 @@ class SamplesController {
             if (!status) {
                 return res.status(400).json({ error: "Status is required" });
             }
-
             const currentUserID = await exportedFunctions.getCurrentUserID(req, res)
             const updatedSample = await SamplesModel.editSample(sample_id, status, currentUserID);
+            sseEmitter.emit('message', {
+                type: 'sample',
+                userId: currentUserID,
+                data: updatedSample, 
+                action: 'status',
+                message: "Sample Status Updated"
+            });
             res.json(updatedSample);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -202,6 +216,13 @@ class SamplesController {
         try {
             const { sample_id } = req.params;
             const deletedSample = await SamplesModel.removeSample(sample_id);
+            sseEmitter.emit('message', {
+                type: 'sample',
+                sampleId: sample_id,
+                data: deletedSample, 
+                action: 'remove',
+                message: "Sample Removed"
+            });
             res.json(deletedSample);
         } catch (error) {
             res.status(500).json({ error: error.message });

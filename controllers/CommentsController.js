@@ -43,6 +43,13 @@ class CommentsController {
         try {
             const { comment_id } = req.params;
             const deletedComment = await CommentsModel.removeComment(comment_id);
+            sseEmitter.emit('message', {
+                type: 'comment',
+                commentId: comment_id,
+                data: deletedComment, 
+                action: 'delete',
+                message: "Comment Removed"
+            });
             res.json(deletedComment);
         } catch (error) {
             res.status(500).json({ error: error.message });

@@ -3,6 +3,8 @@ import exportedFunctions from "../middlewares/uploaderMiddlewares.js";
 import multer from "multer";
 import fs from "fs";
 import env from "../config/env.js";
+import { sseEmitter } from '../middlewares/sseEmitterMiddlewares.js';
+
 
 const { STATIC_URL } = env;
 
@@ -27,6 +29,13 @@ class PicturesController {
             const { sampleId } = req.params;
             const { title, imageUrl, imagePath } = req.body;
             const newPicture = await PicturesModel.addPictures(sampleId, title, imageUrl, imagePath);
+            sseEmitter.emit('message', {
+                type: 'picture',
+                sampleId: sampleId,
+                data: newPicture, 
+                action: 'add',
+                message: "New Picture Added To Sample"
+            });
             res.json(newPicture);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -57,7 +66,13 @@ class PicturesController {
                     console.error(err);
                 }
             }
-
+            sseEmitter.emit('message', {
+                type: 'picture',
+                filePath: filePath,
+                data: deletedItem, 
+                action: 'remove',
+                message: "Picture Removed"
+            });
             res.json({ message: "Picture deleted successfully" });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -78,7 +93,13 @@ class PicturesController {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
-        
+        sseEmitter.emit('message', {
+            type: 'picture',
+            filePath: req.file.path,
+            data: STATIC_URL + '/img/' + req.file.filename, 
+            action: 'upload',
+            message: "Picture Was Uploaded"
+        });
         res.status(200).json({
             message: 'Picture uploaded successfully',
             filePath: req.file.path, // The saved file path on the server.

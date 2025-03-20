@@ -61,6 +61,12 @@ class CollectionsController {
             if (!name || !description) return res.status(400).json({ error: "Name and description are required" });
 
             const updatedCollection = await CollectionsModel.editCollection(id, name, description);
+            sseEmitter.emit('message', {
+                type: 'collection',
+                data: updatedCollection,
+                action: 'edit',
+                message: "Collection Edited"
+            });
             res.json(updatedCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -72,6 +78,12 @@ class CollectionsController {
         try {
             const { id } = req.params;
             const deletedCollection = await CollectionsModel.removeCollection(id);
+            sseEmitter.emit('message', {
+                type: 'collection',
+                data: deletedCollection,
+                action: 'remove',
+                message: "Collection Removed"
+            });
             res.json(deletedCollection);
         } catch (error) {
             res.status(500).json({ error: error.message });
