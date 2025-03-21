@@ -48,8 +48,8 @@ class AuthController {
                 console.log('❌ Invalid credentials');
                 return res.status(400).json({ error: 'Invalid credentials' });
             }
-
-            const token = jwt.sign({ id: user.id, email: user.email, phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: TOKEN_EXPIRE_AFTER });
+            delete user.password;
+            const token = jwt.sign({ user: user, id: user.id, email: user.email, phone: user.phone, role: user.role }, JWT_SECRET, { expiresIn: TOKEN_EXPIRE_AFTER });
             console.log('✅ Login successful. userId:', user.id);
             res.json({ token });
         } catch (error) {
