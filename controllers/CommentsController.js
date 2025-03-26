@@ -8,12 +8,12 @@ const {getCurrentUserID } = exportedFunctions;
 
 class CommentsController {
 
-    // Get Picture's commentes
-    static async getPicture_sComments(req, res) {
+    // Get Samlpe's commentes
+    static async getSample_sConversation(req, res) {
         try {
-            const { picture_id } = req.params;
-            const comments = await CommentsModel.fetchPicture_sComments(picture_id);
-            res.json(comments);
+            const { sample_id } = req.params;
+            const conversation = await CommentsModel.fetchSample_sConversation(sample_id);
+            res.json(conversation);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -22,9 +22,9 @@ class CommentsController {
     // Make Comments
     static async makeComment(req, res) {
         try {
-            const { picture_id, comment_text } = req.body;
+            const { sample_id, comment_text } = req.body;
             const comment_owner = await getCurrentUserID(req, res);
-            const newComment = await CommentsModel.addComment(picture_id, comment_text, comment_owner);
+            const newComment = await CommentsModel.addComment(sample_id, comment_text, comment_owner);
             sseEmitter.emit('message', {
                 type: 'comment',
                 userId: comment_owner,

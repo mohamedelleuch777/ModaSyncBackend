@@ -84,7 +84,7 @@ CREATE TABLE Comments (
     comment_text TEXT,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (comment_owner) REFERENCES Users(id) ON DELETE CASCADE,
-    FOREIGN KEY (sample_id) REFERENCES Pictures(id) ON DELETE CASCADE
+    FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE
 );
 
 -- External Services Provider Table

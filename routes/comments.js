@@ -7,7 +7,7 @@ const { authenticateToken } = exportedFunctions;
 const router = express.Router();
 
 // Protected Routes
-router.get('/:picture_id', authenticateToken, CommentsController.getPicture_sComments);
+router.get('/:sample_id', authenticateToken, CommentsController.getSample_sConversation);
 router.post('/', authenticateToken, CommentsController.makeComment);
 router.delete("/:picture_id", authenticateToken, CommentsController.deleteComment);
 
