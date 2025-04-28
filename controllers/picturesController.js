@@ -29,7 +29,9 @@ class PicturesController {
             const { sampleId } = req.params;
             const { title, imageUrl, imagePath } = req.body;
             const newPicture = await PicturesModel.addPictures(sampleId, title, imageUrl, imagePath);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'picture',
                 sampleId: sampleId,
                 data: newPicture, 
@@ -66,7 +68,9 @@ class PicturesController {
                     console.error(err);
                 }
             }
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'picture',
                 filePath: filePath,
                 data: deletedItem, 

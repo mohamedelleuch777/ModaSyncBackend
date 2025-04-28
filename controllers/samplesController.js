@@ -53,7 +53,9 @@ class SamplesController {
 
             const userId = exportedFunctions.getCurrentUserID(req, res);
             const newSample = await SamplesModel.createSample(subcollectionId, name, imageUrl, userId);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sample',
                 userId: userId,
                 data: newSample, 
@@ -77,7 +79,9 @@ class SamplesController {
             }
             const currentUserID = await exportedFunctions.getCurrentUserID(req, res)
             const updatedSample = await SamplesModel.editSample(sample_id, status, currentUserID);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sample',
                 userId: currentUserID,
                 data: updatedSample, 
@@ -216,7 +220,9 @@ class SamplesController {
         try {
             const { sample_id } = req.params;
             const deletedSample = await SamplesModel.removeSample(sample_id);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sample',
                 sampleId: sample_id,
                 data: deletedSample, 

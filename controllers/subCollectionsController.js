@@ -29,7 +29,9 @@ class SubCollectionsController {
             }
 
             const newSubCollection = await SubCollectionsModel.createSubCollection(collectionId, name, description, imageUrl);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sub-collection',
                 collectionId: collectionId,
                 data: newSubCollection, 
@@ -52,7 +54,9 @@ class SubCollectionsController {
                 return res.status(400).json({ error: "Name and description are required" });
             }
             const updatedSubCollection = await SubCollectionsModel.editSubCollection(id, name, description);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sub-collection',
                 subCollectionId: id,
                 data: updatedSubCollection, 
@@ -70,7 +74,9 @@ class SubCollectionsController {
         try {
             const { id } = req.params;
             const deletedSubCollection = await SubCollectionsModel.removeSubCollection(id);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'sub-collection',
                 subCollectionId: id,
                 data: deletedSubCollection, 

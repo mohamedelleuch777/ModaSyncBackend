@@ -25,7 +25,9 @@ class CommentsController {
             const { sample_id, comment_text } = req.body;
             const comment_owner = await getCurrentUserID(req, res);
             const newComment = await CommentsModel.addComment(sample_id, comment_text, comment_owner);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'comment',
                 userId: comment_owner,
                 data: newComment, 
@@ -43,7 +45,9 @@ class CommentsController {
         try {
             const { comment_id } = req.params;
             const deletedComment = await CommentsModel.removeComment(comment_id);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'comment',
                 commentId: comment_id,
                 data: deletedComment, 

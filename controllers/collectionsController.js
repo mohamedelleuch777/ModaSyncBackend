@@ -39,7 +39,9 @@ class CollectionsController {
             }
 
             const newCollection = await CollectionsModel.createCollection(name, description, imageUrl);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'collection',
                 userId: userId,
                 data: newCollection, 
@@ -61,7 +63,9 @@ class CollectionsController {
             if (!name || !description) return res.status(400).json({ error: "Name and description are required" });
 
             const updatedCollection = await CollectionsModel.editCollection(id, name, description);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'collection',
                 data: updatedCollection,
                 action: 'edit',
@@ -78,7 +82,9 @@ class CollectionsController {
         try {
             const { id } = req.params;
             const deletedCollection = await CollectionsModel.removeCollection(id);
+            const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
+                id: uuid,
                 type: 'collection',
                 data: deletedCollection,
                 action: 'remove',
