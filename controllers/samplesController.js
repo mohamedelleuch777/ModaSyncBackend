@@ -33,6 +33,32 @@ class SamplesController {
         }
     }
 
+    static async getSampleById(req, res) {
+        try {
+            const { sample_id } = req.params;
+
+            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample_id);
+            const timelineList = await SamplesModel.getAllSampleTimeline(sample_id);
+            const sample = await SamplesModel.getSampleById(sample_id);
+
+            const renderedTimelineList = [];
+            for (const timeline of timelineList) {
+                const user = await UsersModel.getUserById(timeline.user_id);
+                timeline.user = user;
+                renderedTimelineList.push(timeline);
+            }
+            const retSamples = {
+                ...sample,
+                images: imageList,
+                timeline: renderedTimelineList
+            }
+
+            res.json(retSamples);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+    
     // ✅ Create a new sample
     static async createSample(req, res) {
         try {

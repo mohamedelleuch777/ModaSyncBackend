@@ -12,6 +12,7 @@ router.get("/availableSamples", authenticateToken, SamplesController.fetchAvaila
 
 // dynamic routes
 router.get("/:subcollectionId", authenticateToken, SamplesController.getAllSamples);
+router.get("/sample/:sample_id", authenticateToken, SamplesController.getSampleById);
 router.put("/:sample_id", authenticateToken, SamplesController.updateSampleStatus);
 router.delete("/:sample_id", authenticateToken, SamplesController.deleteSampleById);
 
