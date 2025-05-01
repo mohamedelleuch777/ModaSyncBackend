@@ -55,9 +55,19 @@ class TasksController {
             const myRole = await whoAmI(req, res);
             const timelines = await TasksModel.fetchAllTimelines();
             let response = null;
+            // Deduplicate by latest timestamp per sample_id
+            response = Object.values(
+                timelines.reduce((acc, timeline) => {
+                    const existing = acc[timeline.sample_id];
+                    if (!existing || new Date(timeline.timestamp) > new Date(existing.timestamp)) {
+                        acc[timeline.sample_id] = timeline;
+                    }
+                    return acc;
+                }, {})
+            );
             switch(myRole) {
                 case USER_ROLES.STYLIST:
-                    response = timelines.filter(timeline => (
+                    response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.NEW ||
                         timeline.status === SAMPLE_STATUS.EDIT ||
                         timeline.status === SAMPLE_STATUS.DEVELOPMENT_DONE ||
@@ -67,13 +77,13 @@ class TasksController {
                     break;
                     
                 case USER_ROLES.MANAGER:
-                    response = timelines.filter(timeline => (
+                    response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.IN_REVIEW
                     ));
                     break;
                 
                 case USER_ROLES.MODELIST:
-                    response = timelines.filter(timeline => (
+                    response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.IN_DEVELOPMENT ||
                         timeline.status === SAMPLE_STATUS.ACCEPTED ||
                         timeline.status === SAMPLE_STATUS.READJUSTMENT ||
@@ -83,13 +93,13 @@ class TasksController {
                     break;
                     
                 case USER_ROLES.EXECUTIVE_WORKER:
-                    response = timelines.filter(timeline => (
+                    response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.IN_PRODUCTION
                     ));
                     break;
                     
                 case USER_ROLES.TESTER:
-                    response = timelines.filter(timeline => (
+                    response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.TESTING
                     ));
                     break;
@@ -102,16 +112,6 @@ class TasksController {
                     break;
             }
             if(response) {
-                // Deduplicate by latest timestamp per sample_id
-                response = Object.values(
-                    response.reduce((acc, timeline) => {
-                        const existing = acc[timeline.sample_id];
-                        if (!existing || new Date(timeline.timestamp) > new Date(existing.timestamp)) {
-                            acc[timeline.sample_id] = timeline;
-                        }
-                        return acc;
-                    }, {})
-                );
                 res.status(200).json(response);
             }
         } catch (error) {
