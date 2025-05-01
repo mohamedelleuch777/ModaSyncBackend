@@ -102,6 +102,16 @@ class TasksController {
                     break;
             }
             if(response) {
+                // Deduplicate by latest timestamp per sample_id
+                response = Object.values(
+                    response.reduce((acc, timeline) => {
+                        const existing = acc[timeline.sample_id];
+                        if (!existing || new Date(timeline.timestamp) > new Date(existing.timestamp)) {
+                            acc[timeline.sample_id] = timeline;
+                        }
+                        return acc;
+                    }, {})
+                );
                 res.status(200).json(response);
             }
         } catch (error) {
