@@ -50,7 +50,7 @@ class SamplesModel {
     }
 
     // ✅ Edit an existing sample
-    static async editSample(sample_id, status, currentUserID) {
+    static async editSample(sample_id, status, comment, currentUserID) {
         return new Promise( async(resolve, reject) => {
             const validStatuses = [
                 'new',                  // responsable: stylist
@@ -78,8 +78,8 @@ class SamplesModel {
                 return reject({ message: "Sample is already in this status" });
             }
 
-            const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status, user_id) VALUES (?, ?, ?)");
-            stmt.run(sample_id, status, currentUserID, function (err) {
+            const stmt = connection.prepare("INSERT INTO Timeline (sample_id, status, comment, user_id) VALUES (?, ?, ?, ?)");
+            stmt.run(sample_id, status, comment, currentUserID, function (err) {
                 stmt.finalize();
                 if (err) reject(err);
                 else if (this.changes === 0) reject({ message: "Sample not found" });

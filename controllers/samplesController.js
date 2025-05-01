@@ -98,13 +98,16 @@ class SamplesController {
     static async updateSampleStatus(req, res) {
         try {
             const { sample_id } = req.params;
-            const { status } = req.body;
+            const { 
+                status,
+                comment
+             } = req.body;
 
             if (!status) {
                 return res.status(400).json({ error: "Status is required" });
             }
             const currentUserID = await exportedFunctions.getCurrentUserID(req, res)
-            const updatedSample = await SamplesModel.editSample(sample_id, status, currentUserID);
+            const updatedSample = await SamplesModel.editSample(sample_id, status, comment, currentUserID);
             const uuid = (new Date()).getTime();
             sseEmitter.emit('message', {
                 id: uuid,

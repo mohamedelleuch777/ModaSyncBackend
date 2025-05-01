@@ -51,6 +51,7 @@ CREATE TABLE Timeline (
     )),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id INTEGER DEFAULT NULL,
+    comment TEXT(1024),
     FOREIGN KEY (sample_id) REFERENCES Samples(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
 );
