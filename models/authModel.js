@@ -51,6 +51,41 @@ class AuthsModel {
         });
     }
 
+    static async getUserById(id, keepPassword = false) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare('SELECT * FROM users WHERE id = ?');
+            stmt.all(id, (err, rows) => {
+                stmt.finalize(); // Close the statement to avoid memory leaks
+                if (err) {
+                    reject(err);
+                } else {
+                    if(keepPassword) {
+                        resolve(rows[0]);
+                    } else {
+                        // Remove passwords from each user object
+                        const sanitizedRows = rows.map(({ password, ...user }) => user);
+                        resolve(sanitizedRows[0]);
+                    }
+                }
+            });
+        });
+    }
+
+    // Example method in AuthModel
+    static async updateUserPassword(userId, newHashedPassword) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare('UPDATE users SET password = ? WHERE id = ?');
+            stmt.run(newHashedPassword, userId, function (err) {
+                stmt.finalize();
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+    }    
+
 }
 
 export default AuthsModel;

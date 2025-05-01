@@ -9,6 +9,7 @@ const router = express.Router();
 // Public Routes
 router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
+router.post('/reset-password', authenticateToken, AuthController.resetPassword);
 
 
 

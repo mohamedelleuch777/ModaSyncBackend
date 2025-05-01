@@ -3,7 +3,9 @@ import AuthModel from "../models/authModel.js";
 import FUNCTIONS from '../utils/hash.js';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, TOKEN_EXPIRE_AFTER } from '../config/env.js';
+import exportedFunctions from '../middlewares/authMiddlewares.js';
 
+const {getCurrentUserID } = exportedFunctions;
 const { hashPassword, comparePassword } = FUNCTIONS;
 
 class AuthController {
@@ -57,6 +59,46 @@ class AuthController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    // Reset Password
+    static async resetPassword(req, res) {
+        try {
+            const { oldPassword, newPassword, confirmation } = req.body;
+            const userId = await getCurrentUserID(req, res);
+
+            if (!oldPassword || !newPassword || !confirmation) {
+                return res.status(400).json({ error: "All fields are required" });
+            }
+
+            if (newPassword.length < 6) {
+                return res.status(400).json({ error: "New password must be at least 6 characters long" });
+            }
+
+            if (newPassword !== confirmation) {
+                return res.status(400).json({ error: "Password confirmation does not match" });
+            }
+
+            const user = await AuthModel.getUserById(userId, true);
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            const isMatch = await comparePassword(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ error: "Old password is incorrect" });
+            }
+
+            const hashedPassword = await hashPassword(newPassword);
+            await AuthModel.updateUserPassword(userId, hashedPassword);
+
+            console.log(`✅ Password updated for userId: ${userId}`);
+            res.json({ success: true, message: "Password updated successfully" });
+        } catch (error) {
+            console.log("❌ Password reset failed", error.message);
+            res.status(500).json({ error: error.message });
+        }
+    }
+    
 
 }
 
