@@ -13,6 +13,18 @@ class SubCollectionsModel {
         });
     }
 
+    // Get a single sub-collection by ID
+    static async getSubCollectionById(id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare("SELECT * FROM SubCollections WHERE id = ?");
+            stmt.all(id, (err, rows) => {
+                stmt.finalize();
+                if (err) reject(err);
+                else resolve(rows[0]);
+            });
+        });
+    }
+
     // ✅ Create a new sub-collection
     static async createSubCollection(collectionId, name, description, image) {
         return new Promise((resolve, reject) => {
