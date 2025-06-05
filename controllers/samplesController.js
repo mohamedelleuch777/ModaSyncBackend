@@ -1,5 +1,7 @@
 import SamplesModel from "../models/samplesModel.js";
 import UsersModel from "../models/usersModel.js";
+import SubCollectionsModel from "../models/subCollectionsModel.js";
+import CollectionsModel from "../models/collectionsModel.js";
 import exportedFunctions from "../middlewares/authMiddlewares.js";
 import { sseEmitter } from "../middlewares/sseEmitterMiddlewares.js";
 
@@ -11,6 +13,8 @@ class SamplesController {
         try {
             const { subcollectionId } = req.params;
             const samples = await SamplesModel.getAllSamples(subcollectionId);
+            const subCollection = await SubCollectionsModel.getSubCollectionById(subcollectionId);
+            const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
             const retSamples = [];
             for(const  sample of samples) {
                 const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
@@ -24,7 +28,8 @@ class SamplesController {
                 retSamples.push({
                     ...sample,
                     images: imageList,
-                    timeline: renderedTimelineList
+                    timeline: renderedTimelineList,
+                    path: [collection.name, subCollection.name, sample.name]
                 });
             }
             res.json(retSamples);
@@ -40,6 +45,8 @@ class SamplesController {
             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample_id);
             const timelineList = await SamplesModel.getAllSampleTimeline(sample_id);
             const sample = await SamplesModel.getSampleById(sample_id);
+            const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+            const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
 
             const renderedTimelineList = [];
             for (const timeline of timelineList) {
@@ -50,7 +57,8 @@ class SamplesController {
             const retSamples = {
                 ...sample,
                 images: imageList,
-                timeline: renderedTimelineList
+                timeline: renderedTimelineList,
+                path: [collection.name, subCollection.name, sample.name]
             }
 
             res.json(retSamples);
@@ -136,13 +144,16 @@ class SamplesController {
                             const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
+                            const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                            const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
                             result.push({
                                 id: sample.id,
                                 subcollectionId: sample.subcollection_id,
                                 isActive: sample.is_active,
                                 status: currentTimeLine[0].status,
                                 timeline: currentTimeLine,
-                                images: imageList
+                                images: imageList,
+                                path: [collection.name, subCollection.name, sample.name]
                             });
                         }
                         res.json(result);
@@ -157,13 +168,16 @@ class SamplesController {
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['new', 'edit', 'development_done', 'external_task_done', 'external_task'].includes(currentTimeLine[0].status)) {
+                                const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                                const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
                                     timeline: currentTimeLine,
-                                    images: imageList
+                                    images: imageList,
+                                    path: [collection.name, subCollection.name, sample.name]
                                 });
                             }
                         }
@@ -179,13 +193,16 @@ class SamplesController {
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['in_development', 'accepted', 'readjustment', 'cut_phase', 'preparing_traces'].includes(currentTimeLine[0].status)) {
+                                const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                                const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
                                     timeline: currentTimeLine,
-                                    images: imageList
+                                    images: imageList,
+                                    path: [collection.name, subCollection.name, sample.name]
                                 });
                             }
                         }
@@ -201,13 +218,16 @@ class SamplesController {
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['in_production'].includes(currentTimeLine[0].status)) {
+                                const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                                const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
                                     timeline: currentTimeLine,
-                                    images: imageList
+                                    images: imageList,
+                                    path: [collection.name, subCollection.name, sample.name]
                                 });
                             }
                         }
@@ -223,13 +243,16 @@ class SamplesController {
                             if(!currentTimeLine) return result;
                             const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
                             if(['testing'].includes(currentTimeLine[0].status)) {
+                                const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                                const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
                                 result.push({
                                     id: sample.id,
                                     subcollectionId: sample.subcollection_id,
                                     isActive: sample.is_active,
                                     status: currentTimeLine[0].status,
                                     timeline: currentTimeLine,
-                                    images: imageList
+                                    images: imageList,
+                                    path: [collection.name, subCollection.name, sample.name]
                                 });
                             }
                         }
