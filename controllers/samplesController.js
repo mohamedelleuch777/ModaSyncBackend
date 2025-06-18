@@ -259,6 +259,54 @@ class SamplesController {
                         res.json(result);
                         break;
                     }
+                case "ProductionResponsible":
+                    {
+                        const availableSamples = await SamplesModel.getActiveSamples();
+                        const result = [];
+                        for (const sample of availableSamples) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
+                            if(['getting_prod_info'].includes(currentTimeLine[0].status)) {
+                                const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                                const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
+                                result.push({
+                                    id: sample.id,
+                                    subcollectionId: sample.subcollection_id,
+                                    isActive: sample.is_active,
+                                    status: currentTimeLine[0].status,
+                                    timeline: currentTimeLine,
+                                    images: imageList,
+                                    path: [collection.name, subCollection.name, sample.name]
+                                });
+                            }
+                        }
+                        res.json(result);
+                        break;
+                    }
+                case "Joker":
+                    {
+                        const availableSamples = await SamplesModel.getActiveSamples();
+                        const result = [];
+                        for (const sample of availableSamples) {
+                            const currentTimeLine = await SamplesModel.getAllSampleTimeline(sample.id);
+                            if(!currentTimeLine) return result;
+                            const imageList = await SamplesModel.getAllImagesBelongingToSample(sample.id);
+                            const subCollection = await SubCollectionsModel.getSubCollectionById(sample.subcollection_id);
+                            const collection = await CollectionsModel.getCollectionById(subCollection.collection_id);
+                            result.push({
+                                id: sample.id,
+                                subcollectionId: sample.subcollection_id,
+                                isActive: sample.is_active,
+                                status: currentTimeLine[0].status,
+                                timeline: currentTimeLine,
+                                images: imageList,
+                                path: [collection.name, subCollection.name, sample.name]
+                            });
+                        }
+                        res.json(result);
+                        break;
+                    }
                 default:
                     res.status(403).json({ error: "Access denied. Only Logged in users can fetch available samples." });
                     break;
@@ -282,6 +330,45 @@ class SamplesController {
                 message: "Sample Removed"
             });
             res.json(deletedSample);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // ✅ Set sample dimensions
+    static async setSampleDimensions(req, res) {
+        try {
+            const { sample_id } = req.params;
+            const { width, height, id } = req.body;
+
+            if (!width || !height || !id) {
+                return res.status(400).json({ error: 'Width, height, and id are required' });
+            }
+
+            const result = await SamplesModel.setSampleDimensions(sample_id, width, height, id);
+            
+            const uuid = (new Date()).getTime();
+            sseEmitter.emit('message', {
+                id: uuid,
+                type: 'sample',
+                sampleId: sample_id,
+                data: { width, height, id },
+                action: 'dimensions_updated',
+                message: "Sample dimensions updated"
+            });
+
+            res.json(result);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    // ✅ Get sample dimensions
+    static async getSampleDimensions(req, res) {
+        try {
+            const { sample_id } = req.params;
+            const dimensions = await SamplesModel.getSampleDimensions(sample_id);
+            res.json(dimensions);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

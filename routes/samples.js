@@ -16,4 +16,8 @@ router.get("/sample/:sample_id", authenticateToken, SamplesController.getSampleB
 router.put("/:sample_id", authenticateToken, SamplesController.updateSampleStatus);
 router.delete("/:sample_id", authenticateToken, SamplesController.deleteSampleById);
 
+// dimensions routes
+router.post("/sample/:sample_id/dimensions", authenticateToken, SamplesController.setSampleDimensions);
+router.get("/sample/:sample_id/dimensions", authenticateToken, SamplesController.getSampleDimensions);
+
 export default router;

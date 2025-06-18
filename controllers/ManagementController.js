@@ -31,7 +31,7 @@ class ManagementController {
                 return res.status(400).json({ error: 'Name, email, role, and password are required' });
             }
 
-            const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible"];
+            const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible", "Joker"];
             if (!validRoles.includes(role)) {
                 return res.status(400).json({ error: "Invalid role specified" });
             }
@@ -89,7 +89,7 @@ class ManagementController {
             const { id } = req.params;
             const { role } = req.body;
 
-            const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible"];
+            const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible", "Joker"];
             if (!validRoles.includes(role)) {
                 return res.status(400).json({ error: "Invalid role specified" });
             }

@@ -25,6 +25,9 @@ CREATE TABLE Samples (
     name TEXT,
     image TEXT,
     isActive TEXT CHECK(isActive IN ('true', 'false')) DEFAULT 'true',
+    sample_width REAL,
+    sample_height REAL,
+    sample_id_dimension TEXT,
     FOREIGN KEY (subcollection_id) REFERENCES SubCollections(id) ON DELETE CASCADE
 );
 
@@ -75,7 +78,7 @@ CREATE TABLE Users (
     email TEXT UNIQUE,
     phone TEXT UNIQUE,
     "password" TEXT,
-    role TEXT CHECK(role IN ('Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible'))
+    role TEXT CHECK(role IN ('Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible', 'Joker'))
 );
 
 -- Comments Table

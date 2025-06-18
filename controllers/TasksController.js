@@ -7,13 +7,14 @@ import exportedFunctions from '../middlewares/authMiddlewares.js';
 const {whoAmI } = exportedFunctions;
 
 const USER_ROLES = {
-    // 'Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible'
+    // 'Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible', 'Joker'
   MANAGER: 'Manager',
   MODELIST: 'Modelist',
   STYLIST: 'Stylist',
   EXECUTIVE_WORKER: 'ExecutiveWorker',
   TESTER: 'Tester',
-  PRODUCTION_RESPONSIBLE: 'ProductionResponsible'
+  PRODUCTION_RESPONSIBLE: 'ProductionResponsible',
+  JOKER: 'Joker'
 };
 const SAMPLE_STATUS = {
   // 'new',                  // responsable: stylist
@@ -112,12 +113,15 @@ class TasksController {
                     ));
                     break;
                     
+                case USER_ROLES.JOKER:
+                    // JOKER can see all tasks - no filtering needed
+                    break;
+                    
                 default:
-                    res.status(400).json({
+                    return res.status(400).json({
                         success: false,
                         error: "Invalid role"
                     });
-                    break;
             }
             if(response) {
                 res.status(200).json(response);

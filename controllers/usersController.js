@@ -80,7 +80,7 @@ class UsersController {
             return res.status(400).json({ error: "Role is required" });
         }
     
-        const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible"];
+        const validRoles = ["Stylist", "Manager", "Modelist", "ExecutiveWorker", "Tester", "ProductionResponsible", "Joker"];
         if (!validRoles.includes(role)) {
             return res.status(400).json({ error: "Invalid role specified" });
         }

@@ -62,6 +62,7 @@ class SamplesModel {
                 'external_task_done',   // responsable: Stylist
                 'in_production',        // responsable: ExecutiveWorker
                 'testing',              // responsable: Tester
+                'getting_prod_info',    // responsable: ProductionResponsible
                 'accepted',             // responsable: Modelist
                 'rejected',             // responsable: isActive = false
                 'readjustment',         // responsable: Modelist
@@ -145,6 +146,50 @@ class SamplesModel {
                 if (err) reject(err);
                 else if (this.changes === 0) reject({ error: "Sample not found" });
                 else resolve({ message: "Sample deleted successfully", id });
+            });
+        });
+    }
+
+    // ✅ Set sample dimensions
+    static async setSampleDimensions(sampleId, width, height, id) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare(`
+                UPDATE Samples 
+                SET sample_width = ?, sample_height = ?, sample_id_dimension = ? 
+                WHERE id = ?
+            `);
+            stmt.run(width, height, id, sampleId, function (err) {
+                stmt.finalize();
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    reject({ error: "Sample not found" });
+                } else {
+                    resolve({ 
+                        message: "Sample dimensions updated successfully", 
+                        sampleId,
+                        dimensions: { width, height, id }
+                    });
+                }
+            });
+        });
+    }
+
+    // ✅ Get sample dimensions
+    static async getSampleDimensions(sampleId) {
+        return new Promise((resolve, reject) => {
+            const stmt = connection.prepare(`
+                SELECT sample_width as width, sample_height as height, sample_id_dimension as id 
+                FROM Samples 
+                WHERE id = ?
+            `);
+            stmt.get(sampleId, (err, row) => {
+                stmt.finalize();
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(row || { width: null, height: null, id: null });
+                }
             });
         });
     }
