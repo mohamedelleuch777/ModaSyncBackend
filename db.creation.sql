@@ -47,6 +47,7 @@ CREATE TABLE Timeline (
         'readjustment',     
         'cut_phase',        
         'preparing_traces', 
+        'getting_prod_info',
         'ready'             
     )),
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -74,7 +75,7 @@ CREATE TABLE Users (
     email TEXT UNIQUE,
     phone TEXT UNIQUE,
     "password" TEXT,
-    role TEXT CHECK(role IN ('Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester'))
+    role TEXT CHECK(role IN ('Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible'))
 );
 
 -- Comments Table

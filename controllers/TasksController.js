@@ -7,12 +7,13 @@ import exportedFunctions from '../middlewares/authMiddlewares.js';
 const {whoAmI } = exportedFunctions;
 
 const USER_ROLES = {
-    // 'Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester'
+    // 'Stylist', 'Manager', 'Modelist', 'ExecutiveWorker', 'Tester', 'ProductionResponsible'
   MANAGER: 'Manager',
   MODELIST: 'Modelist',
   STYLIST: 'Stylist',
   EXECUTIVE_WORKER: 'ExecutiveWorker',
-  TESTER: 'Tester'
+  TESTER: 'Tester',
+  PRODUCTION_RESPONSIBLE: 'ProductionResponsible'
 };
 const SAMPLE_STATUS = {
   // 'new',                  // responsable: stylist
@@ -44,6 +45,7 @@ const SAMPLE_STATUS = {
   READJUSTMENT: 'readjustment',
   CUT_PHASE: 'cut_phase',
   PREPARING_TRACES: 'preparing_traces',
+  GETTING_PROD_INFO: 'getting_prod_info',
   READY: 'ready'
 }
 
@@ -101,6 +103,12 @@ class TasksController {
                 case USER_ROLES.TESTER:
                     response = response.filter(timeline => (
                         timeline.status === SAMPLE_STATUS.TESTING
+                    ));
+                    break;
+                    
+                case USER_ROLES.PRODUCTION_RESPONSIBLE:
+                    response = response.filter(timeline => (
+                        timeline.status === SAMPLE_STATUS.GETTING_PROD_INFO
                     ));
                     break;
                     

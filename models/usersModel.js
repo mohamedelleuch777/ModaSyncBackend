@@ -4,9 +4,13 @@ class UsersModel {
     static async createUser(name, email, phone, password, role) {
         return new Promise((resolve, reject) => {
             const stmt = connection.prepare('INSERT INTO users (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)');
-            stmt.run(name, email, phone, password, role, (err) => {
-                if (err) reject(err);
-                else resolve({ id: this.lastID, name, email, phone });
+            stmt.run(name, email, phone, password, role, function(err) {
+                stmt.finalize();
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({ id: this.lastID, name, email, phone, role });
+                }
             });
         });
     }

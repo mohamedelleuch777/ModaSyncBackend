@@ -22,6 +22,13 @@ const isManager = (req, res, next) => {
     next(); // User is a manager, proceed
 };
 
+const authorizeManager = (req, res, next) => {
+    if (req.user.role !== "Manager") {
+        return res.status(403).json({ error: "Access denied. Manager role required." });
+    }
+    next(); // User is a manager, proceed
+};
+
 const whoAmI = (req, res, next) => {
     return req.user.role;
 };
@@ -33,7 +40,10 @@ const getCurrentUserID = (req, res, next) => {
 const exportedFunctions = {
     authenticateToken,
     isManager,
+    authorizeManager,
     whoAmI,
     getCurrentUserID
 }
+
+export { authenticateToken, isManager, authorizeManager, whoAmI, getCurrentUserID };
 export default exportedFunctions;
