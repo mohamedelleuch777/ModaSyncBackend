@@ -97,4 +97,5 @@ CREATE TABLE ExternalServicesProvider (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     "name" TEXT,
     phone TEXT UNIQUE,
+    active INTEGER DEFAULT 1 CHECK(active IN (0, 1))
 );

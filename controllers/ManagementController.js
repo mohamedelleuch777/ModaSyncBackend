@@ -1,4 +1,5 @@
 import UsersModel from '../models/usersModel.js';
+import ExternalServicesProviderModel from '../models/externalServicesProviderModel.js';
 import FUNCTIONS from '../utils/hash.js';
 
 const { hashPassword } = FUNCTIONS;
@@ -129,22 +130,7 @@ class ManagementController {
     // Get all external providers
     static async getAllExternalProviders(req, res) {
         try {
-            // This would typically query an external_providers table
-            // For now, return mock data
-            const providers = [
-                {
-                    id: 1,
-                    name: 'Premium Embroidery Co.',
-                    phone: '+1-555-0123',
-                    active: true
-                },
-                {
-                    id: 2,
-                    name: 'Fashion Print Services',
-                    phone: '+1-555-0456',
-                    active: false
-                }
-            ];
+            const providers = await ExternalServicesProviderModel.getAllProviders();
             res.json(providers);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -160,20 +146,22 @@ class ManagementController {
                 return res.status(400).json({ error: 'Name and phone are required' });
             }
 
-            // This would typically insert into external_providers table
-            const newProvider = {
-                id: Date.now(), // Mock ID
-                name,
-                phone,
-                active: active !== false
-            };
+            const newProvider = await ExternalServicesProviderModel.createProvider(
+                name, 
+                phone, 
+                active !== false
+            );
             
             res.status(201).json({ 
                 message: 'External provider created successfully', 
                 provider: newProvider 
             });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+                res.status(400).json({ error: 'Phone number already exists' });
+            } else {
+                res.status(500).json({ error: error.message });
+            }
         }
     }
 
@@ -183,13 +171,31 @@ class ManagementController {
             const { id } = req.params;
             const { name, phone, active } = req.body;
             
-            // This would typically update the external_providers table
+            if (!name || !phone) {
+                return res.status(400).json({ error: 'Name and phone are required' });
+            }
+
+            const updatedProvider = await ExternalServicesProviderModel.updateProvider(
+                parseInt(id), 
+                name, 
+                phone, 
+                active !== false
+            );
+            
+            if (!updatedProvider) {
+                return res.status(404).json({ error: 'External provider not found' });
+            }
+            
             res.json({ 
                 message: 'External provider updated successfully',
-                provider: { id, name, phone, active }
+                provider: updatedProvider
             });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+                res.status(400).json({ error: 'Phone number already exists' });
+            } else {
+                res.status(500).json({ error: error.message });
+            }
         }
     }
 
@@ -199,10 +205,18 @@ class ManagementController {
             const { id } = req.params;
             const { active } = req.body;
             
-            // This would typically update the external_providers table
+            const updatedProvider = await ExternalServicesProviderModel.updateProviderStatus(
+                parseInt(id), 
+                active
+            );
+            
+            if (!updatedProvider) {
+                return res.status(404).json({ error: 'External provider not found' });
+            }
+            
             res.json({ 
                 message: `External provider ${active ? 'activated' : 'deactivated'} successfully`,
-                provider: { id, active }
+                provider: updatedProvider
             });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -214,7 +228,14 @@ class ManagementController {
         try {
             const { id } = req.params;
             
-            // This would typically delete from external_providers table
+            const deletedProvider = await ExternalServicesProviderModel.deleteProvider(
+                parseInt(id)
+            );
+            
+            if (!deletedProvider) {
+                return res.status(404).json({ error: 'External provider not found' });
+            }
+            
             res.json({ message: 'External provider deleted successfully', id });
         } catch (error) {
             res.status(500).json({ error: error.message });

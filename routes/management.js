@@ -1,25 +1,24 @@
 import express from 'express';
 import ManagementController from '../controllers/ManagementController.js';
-import { authenticateToken, authorizeManager } from '../middlewares/authMiddlewares.js';
+import { authenticateToken, authorizeManager, authorizeExternalTaskAccess } from '../middlewares/authMiddlewares.js';
 
 const router = express.Router();
 
-// Middleware to ensure only managers can access these routes
+// Base authentication for all routes
 router.use(authenticateToken);
-router.use(authorizeManager);
 
-// ===== USER MANAGEMENT ROUTES =====
-router.get('/users', ManagementController.getAllUsers);
-router.post('/users', ManagementController.createUser);
-router.put('/users/:id', ManagementController.updateUser);
-router.put('/users/:id/role', ManagementController.updateUserRole);
-router.put('/users/:id/status', ManagementController.toggleUserStatus);
+// ===== USER MANAGEMENT ROUTES (Manager only) =====
+router.get('/users', authorizeManager, ManagementController.getAllUsers);
+router.post('/users', authorizeManager, ManagementController.createUser);
+router.put('/users/:id', authorizeManager, ManagementController.updateUser);
+router.put('/users/:id/role', authorizeManager, ManagementController.updateUserRole);
+router.put('/users/:id/status', authorizeManager, ManagementController.toggleUserStatus);
 
-// ===== EXTERNAL PROVIDER ROUTES =====
-router.get('/external-providers', ManagementController.getAllExternalProviders);
-router.post('/external-providers', ManagementController.createExternalProvider);
-router.put('/external-providers/:id', ManagementController.updateExternalProvider);
-router.put('/external-providers/:id/status', ManagementController.updateExternalProviderStatus);
-router.delete('/external-providers/:id', ManagementController.deleteExternalProvider);
+// ===== EXTERNAL PROVIDER ROUTES (Manager, Joker, Stylist) =====
+router.get('/external-providers', authorizeExternalTaskAccess, ManagementController.getAllExternalProviders);
+router.post('/external-providers', authorizeExternalTaskAccess, ManagementController.createExternalProvider);
+router.put('/external-providers/:id', authorizeExternalTaskAccess, ManagementController.updateExternalProvider);
+router.put('/external-providers/:id/status', authorizeExternalTaskAccess, ManagementController.updateExternalProviderStatus);
+router.delete('/external-providers/:id', authorizeExternalTaskAccess, ManagementController.deleteExternalProvider);
 
 export default router;

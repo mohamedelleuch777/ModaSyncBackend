@@ -29,6 +29,14 @@ const authorizeManager = (req, res, next) => {
     next(); // User is a manager, proceed
 };
 
+const authorizeExternalTaskAccess = (req, res, next) => {
+    const allowedRoles = ["Manager", "Joker", "Stylist"];
+    if (!allowedRoles.includes(req.user.role)) {
+        return res.status(403).json({ error: "Access denied. Manager, Joker, or Stylist role required." });
+    }
+    next(); // User has appropriate role, proceed
+};
+
 const whoAmI = (req, res, next) => {
     return req.user.role;
 };
@@ -41,9 +49,10 @@ const exportedFunctions = {
     authenticateToken,
     isManager,
     authorizeManager,
+    authorizeExternalTaskAccess,
     whoAmI,
     getCurrentUserID
 }
 
-export { authenticateToken, isManager, authorizeManager, whoAmI, getCurrentUserID };
+export { authenticateToken, isManager, authorizeManager, authorizeExternalTaskAccess, whoAmI, getCurrentUserID };
 export default exportedFunctions;
